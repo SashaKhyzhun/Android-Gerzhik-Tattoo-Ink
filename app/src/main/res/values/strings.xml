@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Gerzhik Tattoo Ink</string>
+
+    <string name="facebook_app_id">204337840040384</string>
+    <string name="navigation_drawer_open">O</string>
+    <string name="navigation_drawer_close">C</string>
+
+
+    <!-- Navigation Drawer menu labels -->
+    <string name="nav_news">News</string>
+    <string name="nav_map">Find my office</string>
+    <string name="nav_about_me">About me</string>
+    <string name="nav_contact_us">Contact us</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_terms">Terms</string>
+
+    <!-- Toolbar titles when navigation menu item is selected -->
+    <string-array name="nav_item_activity_titles">
+        <item>News</item>
+        <item>Find my office</item>
+        <item>About me</item>
+        <item>Contact us</item>
+        <item>Settings</item>
+    </string-array>
+
+    <string name="activity_title_about_us">About Us</string>
+    <string name="activity_title_privacy_policy">Privacy Policy</string>
+    <string name="action_clear_all">Clear All</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_mark_all_read">Mark All as Read</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="general">General</string>
+    <string name="enter_new_name">Enter new name</string>
+    <string name="name">Name</string>
+    <string name="profile_pictures">Profile Picture</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="notifications">Notifications</string>
+    <string name="new_posts_notifications">New Posts</string>
+    <string name="free_day_for_tattoo">Free Day For Tattoo</string>
+    <string name="new_messages">New Messages</string>
+    <string name="other">Others</string>
+    <string name="logout">Logout</string>
+    <string name="textViewTakeAPicture">Take a Picture</string>
+    <string name="textViewChooseFromGallery">Choose From Gallery</string>
+
+</resources>

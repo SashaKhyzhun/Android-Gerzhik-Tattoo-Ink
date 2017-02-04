@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "468698067823",
+    "firebase_url": "https://gerzhik-tattoo-ink-d291b.firebaseio.com",
+    "project_id": "gerzhik-tattoo-ink-d291b",
+    "storage_bucket": "gerzhik-tattoo-ink-d291b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468698067823:android:12c8f8b932e37b7b",
+        "android_client_info": {
+          "package_name": "com.sashakhyzhun.gerzhiktattooink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468698067823-2jl462aokl0sjkaecs38op9j1me1dufi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "" //AIzaSyDFetRp1mXLW7qq8ptE58peWOK1txotgIk
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

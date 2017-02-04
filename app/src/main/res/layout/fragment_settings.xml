@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_bw"
+    tools:context="com.sashakhyzhun.gerzhiktattooink.activity.MainActivity">
+
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settings_layout" >
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="8dp"
+                android:src="@mipmap/ic_app"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/ivUserPicture" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvUserName"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_below="@+id/ivUserPicture"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/general"
+                android:textStyle="bold"
+                android:id="@+id/textViewGeneral"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_below="@+id/tvUserName"
+                android:layout_alignParentStart="true"
+                android:textColor="@color/white"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textViewGeneral"
+                android:visibility="visible"
+                android:id="@+id/changeNameLayout"
+                android:layout_alignParentStart="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/name"
+                    android:id="@+id/textViewName"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:textColor="#ffffff"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enter_new_name"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/textViewEnterYourName"
+                    android:layout_below="@+id/textViewName"
+                    android:textColor="#ffffff"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/editTextNewName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textViewEnterYourName"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:maxLength="25"
+                    android:backgroundTint="@color/white"
+                    android:singleLine="true"
+                    android:visibility="gone"
+                    android:textColor="#ffffff"
+                    android:inputType="text" />
+
+                <Button
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:text="OK"
+                    android:textColor="#FFF"
+                    android:id="@+id/imageButtonAcceptNewName"
+                    android:layout_below="@+id/editTextNewName"
+                    android:background="@drawable/round_corner"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"
+                    android:id="@+id/view11"
+                    android:visibility="gone"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignRight="@+id/textViewName"
+                    android:layout_alignEnd="@+id/textViewName" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:id="@+id/view"
+                android:visibility="visible"
+                android:layout_below="@+id/changeNameLayout"
+                android:layout_alignEnd="@+id/changeNameLayout" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/changePictureLayout"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_below="@id/view"
+                android:layout_marginBottom="8dp"
+                android:layout_alignParentStart="true" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/profile_pictures"
+                    android:id="@+id/textViewProfilePicture"
+                    android:clickable="true"
+                    android:textColor="#ffffff"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:id="@+id/buttonsLayout">
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textViewTakeAPicture"
+                        android:text="@string/textViewTakeAPicture"
+                        android:textColor="@color/white"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:background="@drawable/round_corner"
+                        android:visibility="gone"
+                        android:padding="8dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textViewChooseFromGallery"
+                        android:text="@string/textViewChooseFromGallery"
+                        android:textColor="@color/white"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:background="@drawable/round_corner"
+                        android:visibility="gone"
+                        android:padding="8dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:id="@+id/view1"
+                android:visibility="visible"
+                android:layout_below="@+id/changePictureLayout"
+                android:layout_alignRight="@+id/changeNameLayout"
+                android:layout_alignEnd="@+id/changeNameLayout" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/logout"
+                android:id="@+id/textViewLogout"
+                android:layout_below="@+id/view1"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:textColor="#ffffff"
+                android:clickable="true"  />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:id="@+id/view10"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                android:layout_below="@+id/textViewLogout"
+                android:layout_alignEnd="@+id/changeNameLayout" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/delete_account"
+                android:id="@+id/textViewDeleteAccount"
+                android:layout_below="@+id/view10"
+                android:layout_alignParentStart="true"
+                android:clickable="true"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/white"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:id="@+id/view2"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                android:layout_below="@+id/textViewDeleteAccount"
+                android:layout_alignRight="@+id/changeNameLayout"
+                android:layout_alignEnd="@+id/changeNameLayout" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/notifications"
+                android:textStyle="bold"
+                android:id="@+id/tvNotifications"
+                android:layout_below="@+id/view2"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:textColor="@color/white" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_posts_notifications"
+                android:id="@+id/switchNewPosts"
+                android:layout_below="@+id/tvNotifications"
+                android:layout_alignParentStart="true"
+                android:layout_alignEnd="@+id/textViewDeleteAccount"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:textColor="@color/white"
+                android:checked="true"
+                android:enabled="true" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:id="@+id/view3"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                android:layout_below="@+id/switchNewPosts"
+                android:layout_alignRight="@+id/changeNameLayout"
+                android:layout_alignEnd="@+id/changeNameLayout" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/free_day_for_tattoo"
+                android:id="@+id/switchFreeDay"
+                android:layout_below="@+id/view3"
+                android:layout_alignParentStart="true"
+                android:layout_alignEnd="@+id/textViewDeleteAccount"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:checked="true"
+                android:textColor="#ffffff" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:id="@+id/view4"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                android:layout_below="@+id/switchFreeDay"
+                android:layout_alignEnd="@+id/changeNameLayout" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_messages"
+                android:id="@+id/switchNewMessages"
+                android:layout_below="@+id/view4"
+                android:layout_alignParentStart="true"
+                android:layout_alignEnd="@+id/textViewDeleteAccount"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:checked="true"
+                android:textColor="#ffffff" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:id="@+id/view5"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                android:layout_below="@+id/switchNewMessages"
+                android:layout_alignEnd="@+id/changeNameLayout" />
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>
