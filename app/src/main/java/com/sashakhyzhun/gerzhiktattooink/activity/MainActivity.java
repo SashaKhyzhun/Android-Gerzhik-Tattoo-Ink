@@ -24,10 +24,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sashakhyzhun.gerzhiktattooink.R;
-import com.sashakhyzhun.gerzhiktattooink.fragments.HomeFragment;
-import com.sashakhyzhun.gerzhiktattooink.fragments.MoviesFragment;
-import com.sashakhyzhun.gerzhiktattooink.fragments.NotificationsFragment;
-import com.sashakhyzhun.gerzhiktattooink.fragments.PhotoFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.NewsFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.AboutMeFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.ContactMeFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.FindMyOfficeFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.SettingsFragment;
 import com.sashakhyzhun.gerzhiktattooink.utils.CircleTransform;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
@@ -218,12 +218,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Fragment getHomeFragment() {
         switch (navItemIndex) {
-            case 0: return new HomeFragment();
-            case 1: return new PhotoFragment();
-            case 2: return new MoviesFragment();
-            case 3: return new NotificationsFragment();
+            case 0: return new NewsFragment();
+            case 1: return new FindMyOfficeFragment();
+            case 2: return new AboutMeFragment();
+            case 3: return new ContactMeFragment();
             case 4: return new SettingsFragment();
-            default: return new HomeFragment();
+            default:return new NewsFragment();
         }
     }
 

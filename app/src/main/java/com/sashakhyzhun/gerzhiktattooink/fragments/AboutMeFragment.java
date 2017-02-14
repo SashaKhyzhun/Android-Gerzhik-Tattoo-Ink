@@ -6,5 +6,5 @@ import android.support.v4.app.Fragment;
  * Created by SashaKhyzhun on 2/2/17.
  */
 
-public class MoviesFragment extends Fragment {
+public class AboutMeFragment extends Fragment {
 }

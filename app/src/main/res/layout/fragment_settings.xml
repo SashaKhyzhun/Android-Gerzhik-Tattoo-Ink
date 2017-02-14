@@ -170,7 +170,7 @@
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textViewTakeAPicture"
+                        android:id="@+id/buttonTakeAPicture"
                         android:text="@string/textViewTakeAPicture"
                         android:textColor="@color/white"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -186,7 +186,7 @@
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textViewChooseFromGallery"
+                        android:id="@+id/buttonChooseFromGallery"
                         android:text="@string/textViewChooseFromGallery"
                         android:textColor="@color/white"
                         android:textAppearance="?android:attr/textAppearanceSmall"
