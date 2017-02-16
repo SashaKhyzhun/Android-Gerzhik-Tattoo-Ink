@@ -1,20 +1,25 @@
 package com.sashakhyzhun.gerzhiktattooink.fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.sashakhyzhun.gerzhiktattooink.R;
+
+import java.util.Date;
 
 /**
  * Created by SashaKhyzhun on 2/2/17.
@@ -22,8 +27,8 @@ import com.sashakhyzhun.gerzhiktattooink.R;
 
 public class FindMyOfficeFragment extends Fragment implements OnMapReadyCallback {
 
-    private MapFragment googleMap;
-    private MarkerOptions marker;
+    MapView mMapView;
+    private GoogleMap googleMap;
     //48.631982, 22.294839
 
     @Override
@@ -37,72 +42,63 @@ public class FindMyOfficeFragment extends Fragment implements OnMapReadyCallback
         View view = inflater.inflate(R.layout.fragment_find_my_office, container, false);
 
 
-        createMapView();
+        mMapView = (MapView) view.findViewById(R.id.mapView);
+        mMapView.onCreate(savedInstanceState);
+
+        //mMapView.onResume(); // needed to get the map to display immediately
+        mMapView.getMapAsync(this);
 
         return view;
     }
 
+
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher))
-                .position(new LatLng(48.631982, 22.294839))
-                .draggable(false)
-                .title("Hello Maps ");
-        googleMap.addMarker(marker);
-    }
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
 
-    /**
-     * Initialises the MapView
-     */
-    private void createMapView() {
-        /** Catch the null pointer exception that may be thrown when initialising the map */
-        try {
-            if (null == googleMap) {
-                googleMap = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.mapView);
+        // For dropping a marker at a point on the Map
+        LatLng uzh = new LatLng(48.631982, 22.294839);
+        googleMap.addMarker(new MarkerOptions().position(uzh).title("Gerzhik Tattoo Ink").snippet("Top Ukraine Tattoo Salon"));
 
-                /** If the map is still null after attempted initialisation, show an error to the user */
-                if (null == googleMap) {
-                    Toast.makeText(getActivity(), "Error creating map", Toast.LENGTH_SHORT).show();
-                }
-            }
-        } catch (NullPointerException exception){
-            Log.e("mapApp", exception.toString());
+        // For showing a move to my location button
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &
+            ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            /************************ for API >= 23 *************************/
+            ActivityCompat.requestPermissions(getActivity(), new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+            }, 1);
+            /****************************************************************/
+
+            return;
         }
+        googleMap.setMyLocationEnabled(true);
+
+
+        // For zooming automatically to the location of the marker
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(uzh).zoom(6).build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
-
-
-    /**
-     * Adds a marker to the map
-     */
-//    private void addMarker(){
-//
-//        /** Make sure that the map has been initialised **/
-//        if(null != googleMap){
-//            googleMap.addMarker(new MarkerOptions()
-//                    .position(new LatLng(0, 0))
-//                    .title("Marker")
-//                    .draggable(true)
-//            );
-//        }
-//    }
-
 
 
     @Override
     public void onResume() {
-        googleMap.onResume();
+        mMapView.onResume();
         super.onResume();
     }
 
     @Override
     public void onDestroy() {
-        googleMap.onDestroy();
+        mMapView.onDestroy();
         super.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
-        googleMap.onLowMemory();
+        mMapView.onLowMemory();
         super.onLowMemory();
     }
+
+
 }
