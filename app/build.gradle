@@ -39,7 +39,7 @@ dependencies {
     compile 'com.android.support:design:25.1.1'
     compile 'com.google.firebase:firebase-core:10.0.1'                 // Fire base
     compile 'com.google.android.gms:play-services-maps:10.0.1'         // MAPS
-
+    compile 'com.google.android.gms:play-services-auth:10.0.1'         // AUTHENTICATION
     compile 'com.android.support:appcompat-v7:25.1.1'                  // Support Library
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'          // Facebook
     compile 'com.github.bumptech.glide:glide:3.7.0'                    // Glide
@@ -49,4 +49,4 @@ dependencies {
 
 }
 
-apply plugin: 'com.google.gms.google-services'                     // GCM
+apply plugin: 'com.google.gms.google-services'
