@@ -70,9 +70,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         userName = sessionManager.getUserName();
     }
 
+
     @Nullable
     @Override
-
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
@@ -127,7 +127,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
                         sessionManager.setUserName(newName);
                         tvUserName.setText(sessionManager.getUserName());
-
+                        TextView drawerUserName = (TextView) getActivity().findViewById(R.id.text_view_user_name);
+                        drawerUserName.setText(newName);
                         tvName.setVisibility(View.VISIBLE);
                         etNewName.setVisibility(View.GONE);
                         line11.setVisibility(View.GONE);
@@ -139,8 +140,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             case R.id.textViewProfilePicture:
 
                 LinearLayout buttonsLayout   = (LinearLayout) getActivity().findViewById(R.id.buttonsLayout);
-                Button       btnTakeAPicture = (Button)       getActivity().findViewById(R.id.buttonTakeAPicture);
-                Button       btnChooseFrom   = (Button)       getActivity().findViewById(R.id.buttonChooseFromGallery);
+                Button btnTakeAPicture = (Button) getActivity().findViewById(R.id.buttonTakeAPicture);
+                Button btnChooseFrom = (Button) getActivity().findViewById(R.id.buttonChooseFromGallery);
 
                 // if we got a permission for read & write storage
                 if (checkPermissions()) {
@@ -234,7 +235,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
+    /**
+     * Methods to get absolute path to picture from internal storage.
+     *
+     * @param uri - this is data from intent: data.getData();
+     * @return absolute path to picture from storage
+     */
     @Nullable
     private String getPath(Uri uri) throws URISyntaxException {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
@@ -285,6 +291,20 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         Uri uri = Uri.fromFile(file);
         sessionManager.setUserPathToPic(uri.toString());
 
+        Glide.with(getActivity())
+                .load(uri)
+                .bitmapTransform(new CropCircleTransformation(context))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .override(130, 130)
+                .into(imageUserPicture);
+        Glide.with(getActivity())
+                .load(uri)
+                .bitmapTransform(new CropCircleTransformation(context))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into((ImageView) getActivity().findViewById(R.id.image_view_user_photo));
+
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file); // create folder in system like a real FILE, not virtual.
@@ -315,13 +335,21 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     }
 
-
+    /**
+     * Method witch handling crop the picture. Here we get photo path, cropped it.
+     * @param source - this is path to origin photo which we want to crop
+     */
     private void beginCrop(Uri source) {
         Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
         Crop.of(source, destination).asSquare().withMaxSize(300, 300).start(getContext(), this);
     }
 
-
+    /**
+     * Method witch handling crop the picture. Here we get photo path, cropped it
+     * @param resultCode - code from intent 'start activity for result' must be 'OK'
+     * @param result - code from intent which shows for us specify request, must be 'REQUEST_CROP'
+     * @throws IOException if something went wrong then we  can expect empty fields.
+     */
     private void handleCrop(int resultCode, Intent result) throws IOException {
         if (resultCode == RESULT_OK) {
             Uri uri = Crop.getOutput(result);
@@ -340,6 +368,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    /**
+     * Method to start crop the photo. This method starts activity for result 'CROP_PIC'
+     * @param picUri - this is data from intent: data.getData();
+     */
     private void performCrop(Uri picUri) {
         // take care of exceptions
         try {
@@ -361,7 +393,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
+    /**
+     * Method which returns boolean value of granted permission. To work with storage we need to
+     * have this permission and we had to check it in runtime
+     * @return value of granted permission
+     */
     private boolean checkPermissions() {
         int res = getContext().checkCallingOrSelfPermission(READ_EXTERNAL_STORAGE);
         return (res == PackageManager.PERMISSION_GRANTED);

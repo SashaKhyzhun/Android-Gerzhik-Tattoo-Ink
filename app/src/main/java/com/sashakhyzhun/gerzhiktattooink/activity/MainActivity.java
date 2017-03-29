@@ -1,5 +1,6 @@
 package com.sashakhyzhun.gerzhiktattooink.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
+                InputMethodManager input = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                if (getWindow().getCurrentFocus() != null)
+                    input.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), 0);
             }
         };
         drawer.setDrawerListener(drawerToggle);
@@ -75,9 +80,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View navHeader = navigationView.getHeaderView(0);
-        TextView  drawerName  = (TextView)  navHeader.findViewById(R.id.name);
-        TextView  drawerEmail = (TextView)  navHeader.findViewById(R.id.website);
-        ImageView drawerImage = (ImageView) navHeader.findViewById(R.id.img_profile);
+        TextView  drawerName  = (TextView)  navHeader.findViewById(R.id.text_view_user_name);
+        TextView  drawerEmail = (TextView)  navHeader.findViewById(R.id.text_view_user_email);
+        ImageView drawerImage = (ImageView) navHeader.findViewById(R.id.image_view_user_photo);
 
         // load nav menu header data
         drawerName.setText(session.getUserName());
