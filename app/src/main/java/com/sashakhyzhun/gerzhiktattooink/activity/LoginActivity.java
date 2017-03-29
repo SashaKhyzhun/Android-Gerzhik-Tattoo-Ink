@@ -1,12 +1,11 @@
 package com.sashakhyzhun.gerzhiktattooink.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.AccessTokenTracker;
@@ -15,7 +14,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -26,6 +24,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.sashakhyzhun.gerzhiktattooink.R;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
+import com.sashakhyzhun.locationhelper.MyLocationHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +44,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String userEmail, userPicture, userName, userID;
     private LoginButton btnLoginFacebook;
     private SignInButton btnLoginGoogle;
+    private Button btnLoginAnonymous;
 
     private CallbackManager callbackManager;
     private GoogleApiClient mGoogleApiClient;
@@ -57,15 +57,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
 
-        /************************ for API >= 23 *************************/
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-        }, 1);
-        /****************************************************************/
+        MyLocationHelper locationHelper = new MyLocationHelper(this);
+        locationHelper.askLocationPermission();
+
+//        /************************ for API >= 23 *************************/
+//        ActivityCompat.requestPermissions(this, new String[]{
+//                Manifest.permission.ACCESS_FINE_LOCATION,
+//                Manifest.permission.ACCESS_COARSE_LOCATION,
+//        }, 1);
+//        /****************************************************************/
 
         btnLoginFacebook = (LoginButton) findViewById(R.id.button_login_facebook);
         btnLoginGoogle = (SignInButton) findViewById(R.id.button_login_google);
+        btnLoginAnonymous = (Button) findViewById(R.id.button_login_anonymous);
 
 
         callbackManager = CallbackManager.Factory.create();
@@ -87,6 +91,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         btnLoginFacebook.setOnClickListener(this);
         btnLoginGoogle.setOnClickListener(this);
+        btnLoginAnonymous.setOnClickListener(this);
+
 
     }
 
@@ -94,7 +100,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_login_facebook:
-
                 btnLoginFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
@@ -124,6 +129,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.button_login_google:
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
+                break;
+            case R.id.button_login_anonymous:
+                Toast.makeText(this, "ANON", Toast.LENGTH_SHORT).show();
+                registerLikeAsAnonymous();
                 break;
         }
     }
@@ -184,15 +193,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             SessionManager session = SessionManager.getInstance(getApplicationContext());
             session.createUserLoginSession(userName, userEmail, userID, userPicture, "google");
 
-            startActivity(new Intent(this, SplashActivity.class));
-
             Log.i(TAG, "onCompleted: userName    : " + userName);
             Log.i(TAG, "onCompleted: userEmail   : " + userEmail);
             Log.i(TAG, "onCompleted: userID      : " + userID);
             Log.i(TAG, "onCompleted: userPicture : " + userPicture);
 
+            startActivity(new Intent(this, SplashActivity.class));
         }
 
+    }
+
+    private void registerLikeAsAnonymous() {
+        String userName = "", userEmail = "", userID = "", userPicture = "";
+        SessionManager session = SessionManager.getInstance(getApplicationContext());
+        session.createUserLoginSession(userName, userEmail, userID, userPicture, "anonymous");
+
+        startActivity(new Intent(this, SplashActivity.class));
     }
 
 

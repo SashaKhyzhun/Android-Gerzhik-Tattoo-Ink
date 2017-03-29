@@ -28,7 +28,9 @@ import com.sashakhyzhun.gerzhiktattooink.fragments.NewsFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.AboutMeFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.ContactMeFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.FindMyOfficeFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.PrivacyPolicyFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.SettingsFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.TermsFragment;
 import com.sashakhyzhun.gerzhiktattooink.utils.CircleTransform;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
 
@@ -36,7 +38,9 @@ import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_NEWS;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_FIND_MY_OFFICE;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_CONTACT_US;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_ABOUT_ME;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_PRIVACY_POLICY;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_SETTINGS;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_TERMS;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -88,17 +92,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "text", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "text", Snackbar.LENGTH_LONG).setAction("Action", null).show());
 
         if (savedInstanceState == null) {
             navItemIndex = 0;
             CURRENT_TAG = TAG_NEWS;
-            loadHomeFragment();
+            loadCurrentFragment();
         }
     }
 
@@ -107,11 +106,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Returns respected fragment that user
      * selected from navigation menu
      */
-    private void loadHomeFragment() {
+    private void loadCurrentFragment() {
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-        navigationView.getMenu().getItem(navItemIndex);   // selecting appropriate nav menu item
-        getSupportActionBar().setTitle(activityTitles[navItemIndex]); // set toolbar title
-
+        //navigationView.getMenu().getItem(navItemIndex);   // selecting appropriate nav menu item
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(activityTitles[navItemIndex]); // set toolbar title
+        }
         // if user select the current navigation menu again, just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
@@ -123,16 +123,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // when switching between navigation menus
         // So using runnable, the fragment is loaded with cross fade effect
         // This effect can be seen in GMail app
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                // update the main content by replacing fragments
-                Fragment fragment = getHomeFragment();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-                fragmentTransaction.commitAllowingStateLoss();
-            }
+        Runnable runnable = () -> {
+            // update the main content by replacing fragments
+            Fragment fragment = getHomeFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+            fragmentTransaction.commitAllowingStateLoss();
         };
 
         mHandler = new Handler();
@@ -168,19 +165,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 CURRENT_TAG = TAG_SETTINGS;
                 break;
             case R.id.nav_terms:
-                // idea: mb start new intent like new task?
-                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                drawer.closeDrawers();
-                return true;
+                navItemIndex = 5;
+                CURRENT_TAG = TAG_TERMS;
+                break;
             case R.id.nav_privacy_policy:
-                startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
-                drawer.closeDrawers();
-                return true;
-            default: navItemIndex = 0;
+                navItemIndex = 6;
+                CURRENT_TAG = TAG_PRIVACY_POLICY;
+                break;
+            default:
+                navItemIndex = 0;
+                CURRENT_TAG = TAG_NEWS;
         }
 
 
-        loadHomeFragment();
+        loadCurrentFragment();
 
         return true;
     }
@@ -195,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (navItemIndex != 0) {
             navItemIndex = 0;
             CURRENT_TAG = TAG_NEWS;
-            loadHomeFragment();
+            loadCurrentFragment();
         }
     }
 
@@ -223,6 +221,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case 2: return new AboutMeFragment();
             case 3: return new ContactMeFragment();
             case 4: return new SettingsFragment();
+            case 5: return new TermsFragment();
+            case 6: return new PrivacyPolicyFragment();
             default:return new NewsFragment();
         }
     }

@@ -21,6 +21,8 @@
         <item>About me</item>
         <item>Contact us</item>
         <item>Settings</item>
+        <item>Terms</item>
+        <item>Privacy Policy</item>
     </string-array>
 
     <string name="activity_title_about_us">About Us</string>
