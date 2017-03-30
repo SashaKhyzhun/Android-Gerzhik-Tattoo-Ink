@@ -36,7 +36,7 @@ import com.sashakhyzhun.gerzhiktattooink.fragments.SettingsFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.TermsFragment;
 import com.sashakhyzhun.gerzhiktattooink.utils.CircleTransform;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
-import com.sashakhyzhun.locationhelper.MyService;
+import com.sashakhyzhun.locationhelper.LocationService;
 
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_ABOUT_ME;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_CONTACT_US;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static String CURRENT_TAG = TAG_NEWS;
     public static int navItemIndex = 0;
     private NavigationView navigationView;
-    private FloatingActionButton fab;
+//    private FloatingActionButton fab;
     private DrawerLayout drawer;
     private String[] activityTitles;
     private Handler mHandler;
@@ -98,18 +98,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .into(drawerImage);
 
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            MyService service = new MyService();
-            service.onCreate();
-
-            Snackbar.make(view, "text?", Snackbar.LENGTH_LONG).setAction("Action", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(MainActivity.this, "text.", Toast.LENGTH_SHORT).show();
-                }
-            }).show();
-        });
+//        fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(view -> {
+//            Snackbar.make(view, "text?", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//        });
 
         if (savedInstanceState == null) {
             navItemIndex = 0;
@@ -132,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // if user select the current navigation menu again, just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
-            toggleFab();
+            //toggleFab();
             return;
         }
 
@@ -153,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mHandler.post(runnable); // If 'runnable' is not null, then add to the message queue
         drawer.closeDrawers();   // Closing drawer on item click
         invalidateOptionsMenu(); // refresh toolbar menu
-        toggleFab();             // show or hide the fab button
+        //toggleFab();             // show or hide the fab button
     }
 
 
@@ -245,13 +237,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    private void toggleFab() {
-        if (navItemIndex == 0) {
-            fab.show();
-        } else {
-            fab.hide();
-        }
-    }
+//    private void toggleFab() {
+//        if (navItemIndex == 0) {
+//            fab.show();
+//        } else {
+//            fab.hide();
+//        }
+//    }
 
 
 }

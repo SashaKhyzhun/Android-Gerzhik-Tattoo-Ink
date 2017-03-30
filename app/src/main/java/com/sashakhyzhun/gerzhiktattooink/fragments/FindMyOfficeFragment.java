@@ -16,8 +16,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.sashakhyzhun.gerzhiktattooink.R;
-import com.sashakhyzhun.locationhelper.MySecurityException;
-import com.sashakhyzhun.locationhelper.PermissionUtil;
 
 /**
  * Created by SashaKhyzhun on 2/2/17.
