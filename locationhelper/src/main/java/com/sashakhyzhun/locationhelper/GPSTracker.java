@@ -3,6 +3,7 @@ package com.sashakhyzhun.locationhelper;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,8 +12,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ServiceCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,23 +27,26 @@ import android.widget.Toast;
 public final class GPSTracker implements LocationListener {
 
     // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // 10 meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1; // 1 minute
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60; // 1 minute
 
-    private Activity activity;
+    //private Activity activity;
+    private Context context;
     private boolean isGPSEnabled = false;         // flag for GPS status
     private boolean isNetworkEnabled = false;     // flag for network status
     private boolean canGetLocation = false;       // flag for GPS status
     private Location location;                    // location
     private double latitude;                      // latitude
     private double longitude;                     // longitude
+    private double speed;                         // speed
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public GPSTracker(Activity activity) {
-        this.activity = activity;
+    public GPSTracker(/*Activity activity, */Context context) {
+        /*this.activity = activity;*/
+        this.context = context;
         getLocation();
     }
 
@@ -48,9 +54,9 @@ public final class GPSTracker implements LocationListener {
      * Function to get the user's current location
      * @return
      */
-    public Location getLocation() {
+    private Location getLocation() {
         try {
-            locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             // getting GPS status
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             Log.v("isGPSEnabled", "=" + isGPSEnabled);
@@ -59,27 +65,20 @@ public final class GPSTracker implements LocationListener {
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             Log.v("isNetworkEnabled", "=" + isNetworkEnabled);
 
-            if (isGPSEnabled == false && isNetworkEnabled == false) {
-//                Toast.makeText(context, "Check network connection or turn on location", Toast.LENGTH_LONG).show();
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                // no network provider is enabled
             } else {
                 this.canGetLocation = true;
+                if (ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(null, new String[] {
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                }
                 if (isNetworkEnabled) {
                     location = null;
-//                    MyLocationHelper locationHelper = new MyLocationHelper(activity);
-//                    if (!locationHelper.getLocationPermissionGranted()) {
-//                        locationHelper.invokeLocationPermission();
-//                    }
-                    if (ActivityCompat.checkSelfPermission(activity,
-                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(activity,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(
-                                activity,
-                                new String[] {
-                                        Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION},
-                                1);
-                    }
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                     Log.d("Network", "Network");
                     if (locationManager != null) {
@@ -92,7 +91,6 @@ public final class GPSTracker implements LocationListener {
                 }
                 // if GPS Enabled get lat/long using GPS Services
                 if (isGPSEnabled) {
-                    location = null;
                     if (location == null) {
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                         Log.d("GPS Enabled", "GPS Enabled");
@@ -147,10 +145,21 @@ public final class GPSTracker implements LocationListener {
     }
 
     /**
+     * Function to get Speed
+     */
+    public double getSpeed() {
+        if (location != null) {
+            speed = location.getSpeed();
+        }
+        return speed;
+    }
+
+    /**
      * Function to check GPS/wifi enabled
      * @return boolean
      */
     public boolean canGetLocation() {
+        // return bool value
         return this.canGetLocation;
     }
 
@@ -159,7 +168,7 @@ public final class GPSTracker implements LocationListener {
      * launch Settings Options
      */
     public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         // Setting Dialog Title
         alertDialog.setTitle("GPS settings");
         // Setting Dialog Message
@@ -168,7 +177,7 @@ public final class GPSTracker implements LocationListener {
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                activity.startActivity(intent);
+                context.startActivity(intent);
             }
         });
         // on pressing cancel button
@@ -182,9 +191,43 @@ public final class GPSTracker implements LocationListener {
     }
 
 
+    /**
+     * Method to set daily location checker. Create AlarmManager for daily ring, convert
+     * time and sending extras for CustomAlarmReceiver. Next we generate cards for MainActivity.
+     * @param requestCode - values from time picker: minutes and hour. To start we get this,
+     *                      convert to normal view (means from 1:8 to 01:08) and put inside
+     *                      alarmManager like ID.
+     * @param hour - this is value from last method-provider, this value is equals to time when
+     *               we need fire our alarm manager.
+     * @param min  - this is value from last method-provider, this value is equals to time when
+     *               we need fire our alarm manager.
+     */
+    public void setDailyLocationChecker(int hour, int min, int requestCode) {
+        LocationChecker locationChecker = new LocationChecker(context);
+        locationChecker.enableDailyLocationCheck(hour, min, requestCode);
+    }
+
+    /**
+     * Method to disable daily location checker. Create AlarmManager for daily ring, convert
+     * time and sending extras for CustomAlarmReceiver. Next we generate cards for MainActivity.
+     * @param requestCode - values from time picker: minutes and hour. To start we get this,
+     *                      convert to normal view (means from 1:8 to 01:08) and put inside
+     *                      alarmManager like ID.
+     */
+    public void disableDailyLocationChecker(int requestCode) {
+        LocationChecker locationChecker = new LocationChecker(context);
+        locationChecker.disableDailyLocationCheck(requestCode);
+    }
+
+
+
+
+
     @Override
     public void onLocationChanged(Location location) {
-        //.
+        speed = location.getSpeed();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
     }
 
     @Override

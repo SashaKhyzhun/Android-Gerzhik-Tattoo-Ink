@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
         MyLocationHelper locationHelper = new MyLocationHelper(this);
-        locationHelper.getLocationPermissionGranted();
+        locationHelper.getLocationPermissionGrantedValue();
 
 
 //        /************************ for API >= 23 *************************/
