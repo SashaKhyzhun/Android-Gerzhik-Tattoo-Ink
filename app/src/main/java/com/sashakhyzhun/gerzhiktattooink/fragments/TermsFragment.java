@@ -1,9 +1,7 @@
 package com.sashakhyzhun.gerzhiktattooink.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.sashakhyzhun.gerzhiktattooink.R;
-import com.sashakhyzhun.gerzhiktattooink.controller.DailyLocationChecker;
+import com.sashakhyzhun.gerzhiktattooink.receiver.MyReceiver;
+import com.sashakhyzhun.locationhelper.LocationDailyChecker;
 
 /**
  * @autor SashaKhyzhun
@@ -51,8 +50,8 @@ public class TermsFragment extends Fragment {
                 System.out.println("buttonCreate | min: " + min);
                 System.out.println("buttonCreate | RequestCode: " + requestCode);
 
-                DailyLocationChecker dlc = new DailyLocationChecker(getContext());
-                dlc.enableDailyNotificationReminder(hour, min, requestCode);
+                LocationDailyChecker dlc = new LocationDailyChecker(getContext());
+                dlc.enableDailyNotificationReminder(hour, min, requestCode, MyReceiver.class);
 
 
             }

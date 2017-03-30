@@ -1,12 +1,10 @@
-package com.sashakhyzhun.gerzhiktattooink.controller;
+package com.sashakhyzhun.locationhelper;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-
-import com.sashakhyzhun.gerzhiktattooink.receiver.MyReceiver;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -16,14 +14,14 @@ import java.util.Date;
  * Created on 3/30/17.
  */
 
-public class DailyLocationChecker {
+public class LocationDailyChecker {
 
     private Context context;
 
-    public DailyLocationChecker(Context context) { this.context = context; }
+    public LocationDailyChecker(Context context) { this.context = context; }
 
 
-    public void enableDailyNotificationReminder(int hour, int min, int requestCode) {
+    public void enableDailyNotificationReminder(int hour, int min, int requestCode, Class clazzReceiver) {
         Calendar myCalender = Calendar.getInstance();
         myCalender.set(Calendar.HOUR_OF_DAY, hour);
         myCalender.set(Calendar.MINUTE, min);
@@ -36,10 +34,17 @@ public class DailyLocationChecker {
 
         Date date = new Date(myCalender.getTimeInMillis());
         Date now = new Date(System.currentTimeMillis());
-        System.out.println("Alarm | Current time on device : " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
-        System.out.println("Alarm | Enable Daily Wake Up on: " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds());
 
-        Intent notifyIntent = new Intent(context, MyReceiver.class);
+        System.out.println("LocationDailyChecker | Current time on device : "
+                + now.getHours() + ":"
+                + now.getMinutes() + ":"
+                + now.getSeconds());
+        System.out.println("LocationDailyChecker | Enable Daily Wake Up on: "
+                + date.getHours() + ":"
+                + date.getMinutes() + ":"
+                + date.getSeconds());
+
+        Intent notifyIntent = new Intent(context, clazzReceiver);
         notifyIntent.putExtra("hour", hour);
         notifyIntent.putExtra("min", min);
         notifyIntent.putExtra("requestCode", requestCode);
@@ -54,9 +59,9 @@ public class DailyLocationChecker {
 
     }
 
-    public void disableDailyNotificationReminder(int requestCode) {
-        System.out.println("Notification | Disable Daily Reminder");
-        Intent alarmIntent = new Intent(context, MyReceiver.class);
+    public void disableDailyNotificationReminder(int requestCode, Class clazz) {
+        System.out.println("LocationDailyChecker | Disable Daily Reminder");
+        Intent alarmIntent = new Intent(context, clazz);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);

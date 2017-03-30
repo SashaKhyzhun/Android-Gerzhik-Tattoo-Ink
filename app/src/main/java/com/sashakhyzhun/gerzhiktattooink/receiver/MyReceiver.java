@@ -1,23 +1,20 @@
 package com.sashakhyzhun.gerzhiktattooink.receiver;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.sashakhyzhun.gerzhiktattooink.R;
 import com.sashakhyzhun.gerzhiktattooink.activity.MainActivity;
-import com.sashakhyzhun.gerzhiktattooink.controller.DailyLocationChecker;
+import com.sashakhyzhun.locationhelper.LocationDailyChecker;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
 import com.sashakhyzhun.locationhelper.GPSTracker;
 
@@ -44,26 +41,20 @@ public class MyReceiver extends BroadcastReceiver {
         if (sessionManager.isUserLoggedIn()) {
 
             GPSTracker gpsTracker = new GPSTracker(context);
-            boolean isEnabled = false;
-            if (ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                isEnabled = true;
-            }
+            boolean isEnabled = gpsTracker.isGPSEnabled();
 
             sendNotification(context, "Location Permission: " + isEnabled,
                                       "Lat: " + gpsTracker.getLatitude()
                                   + "\nLon: " + gpsTracker.getLongitude());
 
-            DailyLocationChecker dlc = new DailyLocationChecker(context);
+            LocationDailyChecker dlc = new LocationDailyChecker(context);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     int hour = intent.getIntExtra("hour", 0);
                     int min = intent.getIntExtra("min", 0);
                     int requestCode = intent.getIntExtra("requestCode", 0);
-                    dlc.enableDailyNotificationReminder(hour, min, requestCode);
+                    dlc.enableDailyNotificationReminder(hour, min, requestCode, MyReceiver.class);
                 }
             }, 1000);
 
