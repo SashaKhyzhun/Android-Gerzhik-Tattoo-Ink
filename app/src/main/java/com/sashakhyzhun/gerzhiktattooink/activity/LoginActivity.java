@@ -58,7 +58,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
         MyLocationHelper locationHelper = new MyLocationHelper(this);
-        locationHelper.askLocationPermission();
+        locationHelper.getLocationPermissionGranted();
+
 
 //        /************************ for API >= 23 *************************/
 //        ActivityCompat.requestPermissions(this, new String[]{
@@ -138,7 +139,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
@@ -177,6 +177,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.i(TAG, "onCompleted: userPicture : " + userPicture);
     }
 
+
     private void registerUserWithGoogle(GoogleSignInResult result) {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
@@ -202,6 +203,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
 
     private void registerLikeAsAnonymous() {
         String userName = "", userEmail = "", userID = "", userPicture = "";
