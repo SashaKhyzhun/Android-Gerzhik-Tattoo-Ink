@@ -1,10 +1,18 @@
 package com.sashakhyzhun.gerzhiktattooink.utils;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.sashakhyzhun.gerzhiktattooink.activity.SplashActivity;
 
 import java.util.HashMap;
@@ -21,7 +29,7 @@ public class SessionManager {
     public static final String KEY_NAME = "name";                 // User name
     public static final String KEY_EMAIL = "email";               // Email address
     public static final String KEY_PICTURE = "picture";           // User picture path
-
+    public static final String KEY_REG_WITH = "regWith";          // Service with which we was reg.
     private static final String PREFER_NAME = "PreferName";       // Shared pref file name
     private static final String IS_USER_LOGIN = "IsUserLoggedIn"; // All Shared Preferences Keys
 
@@ -47,24 +55,15 @@ public class SessionManager {
         return instance;
     }
 
-    public void createUserLoginSession(String name, String email, String id, String picture) {
-        editor.putBoolean(IS_USER_LOGIN, true); // Storing login value as TRUE
-        editor.putString(KEY_ID,    id);        // Storing id in pref
-        editor.putString(KEY_NAME,    name);    // Storing name in pref
-        editor.putString(KEY_EMAIL,   email);   // Storing email in pref
-        editor.putString(KEY_PICTURE, picture); // Storing picture in pref
+    public void createUserLoginSession(String name, String email, String id, String picture, String regWith) {
+        editor.putBoolean(IS_USER_LOGIN, true);  // Storing login value as TRUE
+        editor.putString(KEY_ID,       id);      // Storing id in pref
+        editor.putString(KEY_NAME,     name);    // Storing name in pref
+        editor.putString(KEY_EMAIL,    email);   // Storing email in pref
+        editor.putString(KEY_PICTURE,  picture); // Storing picture in pref
+        editor.putString(KEY_REG_WITH, regWith); // Storing service name with which we was reg.
         editor.commit();
     }
-
-    public HashMap<String, String> getUserDetails() {
-        HashMap<String, String> user = new HashMap<>();
-        user.put(KEY_ID,      pref.getString(KEY_ID,      ""));
-        user.put(KEY_NAME,    pref.getString(KEY_NAME,    ""));
-        user.put(KEY_EMAIL,   pref.getString(KEY_EMAIL,   ""));
-        user.put(KEY_PICTURE, pref.getString(KEY_PICTURE, ""));
-        return user;
-    }
-
 
     public void setUserPathToPic(String newPathToPic) {
         editor.putString(KEY_PICTURE, newPathToPic);
@@ -74,6 +73,40 @@ public class SessionManager {
     public void setUserName(String newName) {
         editor.putString(KEY_NAME, newName);
         editor.commit();
+    }
+
+    public void logoutUser() {
+        if (getUserRegWith().equals("facebook")) {
+            LoginManager.getInstance().logOut();
+        } else {
+//            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                    .requestEmail()
+//                    .build();
+//
+//            GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(context)
+//                    .enableAutoManage(f, connectionResult -> {})
+//                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+//                    .build();
+            //Auth.GoogleSignInApi.signOut(null);
+        }
+        editor.clear();  // Clearing all user data from Shared Preferences
+        editor.commit();
+
+        Intent i = new Intent(context, SplashActivity.class); // After logout redirect
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);           // Closing all the Activities
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);            // Add new Flag to start new Activity
+        context.startActivity(i);                             // Staring Login Activity
+    }
+
+
+
+    public HashMap<String, String> getUserDetails() {
+        HashMap<String, String> user = new HashMap<>();
+        user.put(KEY_ID,      pref.getString(KEY_ID,      ""));
+        user.put(KEY_NAME,    pref.getString(KEY_NAME,    ""));
+        user.put(KEY_EMAIL,   pref.getString(KEY_EMAIL,   ""));
+        user.put(KEY_PICTURE, pref.getString(KEY_PICTURE, ""));
+        return user;
     }
 
     public String getUserID() {
@@ -88,6 +121,10 @@ public class SessionManager {
         return pref.getString("email", "");
     }
 
+    public String getUserRegWith() {
+        return pref.getString("regWith", "");
+    }
+
     public String getUserPathToPic() {
         return pref.getString("picture", "");
     }
@@ -95,7 +132,6 @@ public class SessionManager {
     public boolean isUserLoggedIn() {
         return pref.getBoolean(IS_USER_LOGIN, false);
     }
-
 
     public boolean checkLogin() {
         // Check login status
@@ -107,17 +143,6 @@ public class SessionManager {
             return true;
         }
         return false;
-    }
-
-    public void logoutUser() {
-        LoginManager.getInstance().logOut();
-        editor.clear();  // Clearing all user data from Shared Preferences
-        editor.commit();
-
-        Intent i = new Intent(context, SplashActivity.class); // After logout redirect
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);           // Closing all the Activities
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);            // Add new Flag to start new Activity
-        context.startActivity(i);                             // Staring Login Activity
     }
 
 

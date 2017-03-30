@@ -11,6 +11,8 @@ public class Constants {
     public static final String TAG_ABOUT_ME = "about me";
     public static final String TAG_CONTACT_US = "contact us";
     public static final String TAG_SETTINGS = "settings";
+    public static final String TAG_TERMS = "terms";
+    public static final String TAG_PRIVACY_POLICY = "privacy policy";
 
 
     public static final int CAMERA_REQUEST = 1888;

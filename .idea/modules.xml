@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GerzhikTattooInk.iml" filepath="$PROJECT_DIR$/GerzhikTattooInk.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/locationhelper/locationhelper.iml" filepath="$PROJECT_DIR$/locationhelper/locationhelper.iml" />
     </modules>
   </component>
 </project>

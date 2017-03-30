@@ -1,10 +1,11 @@
 package com.sashakhyzhun.gerzhiktattooink.fragments;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,22 +21,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sashakhyzhun.gerzhiktattooink.R;
+import com.sashakhyzhun.gerzhiktattooink.activity.MainActivity;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
+import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
+import java.net.URISyntaxException;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
+import static com.facebook.FacebookSdk.getCacheDir;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.CAMERA_REQUEST;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.CROP_PIC;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.SELECT_FILE;
 
 /**
@@ -51,14 +57,19 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private TextView tvDeleteAccount;
     private TextView tvUserName;
     private String userName;
+    private String userPathToPic;
     private ImageView imageUserPicture;
+    private Context context;
     public Uri picUri;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sessionManager = SessionManager.getInstance(getContext());
+        userPathToPic = sessionManager.getUserPathToPic();
+        userName = sessionManager.getUserName();
     }
+
 
     @Nullable
     @Override
@@ -66,21 +77,20 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         imageUserPicture = (ImageView)view.findViewById(R.id.ivUserPicture);
+        Glide.with(this)
+                .load(userPathToPic)
+                .bitmapTransform(new CropCircleTransformation(getContext()))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(imageUserPicture);
+
         tvUserName = (TextView)view.findViewById(R.id.tvUserName);
-
-        String userPathToPic = sessionManager.getUserPathToPic();
-        userName = sessionManager.getUserName();
-
-        Glide.with(this).load(userPathToPic).bitmapTransform(new CropCircleTransformation(getContext()))
-                .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(imageUserPicture);
         tvUserName.setText(userName);
 
         tvName           = (TextView) view.findViewById(R.id.textViewName);
         tvLogout         = (TextView) view.findViewById(R.id.textViewLogout);
         tvDeleteAccount  = (TextView) view.findViewById(R.id.textViewDeleteAccount);
         tvProfilePicture = (TextView) view.findViewById(R.id.textViewProfilePicture);
-
-
 
 
         tvName.setOnClickListener(this);
@@ -117,7 +127,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
                         sessionManager.setUserName(newName);
                         tvUserName.setText(sessionManager.getUserName());
-
+                        TextView drawerUserName = (TextView) getActivity().findViewById(R.id.text_view_user_name);
+                        drawerUserName.setText(newName);
                         tvName.setVisibility(View.VISIBLE);
                         etNewName.setVisibility(View.GONE);
                         line11.setVisibility(View.GONE);
@@ -128,17 +139,19 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.textViewProfilePicture:
 
-                LinearLayout buttonsLayout  = (LinearLayout) getActivity().findViewById(R.id.buttonsLayout);
-                TextView     tvTakeAPicture = (TextView)     getActivity().findViewById(R.id.textViewTakeAPicture);
-                TextView     tvChooseFrom   = (TextView)     getActivity().findViewById(R.id.textViewChooseFromGallery);
+                LinearLayout buttonsLayout   = (LinearLayout) getActivity().findViewById(R.id.buttonsLayout);
+                Button btnTakeAPicture = (Button) getActivity().findViewById(R.id.buttonTakeAPicture);
+                Button btnChooseFrom = (Button) getActivity().findViewById(R.id.buttonChooseFromGallery);
 
-                if (checkWriteExternalPermission()) {
+                // if we got a permission for read & write storage
+                if (checkPermissions()) {
+                    // if our layout is gone then show, else hide.
                     if (buttonsLayout.getVisibility() == View.GONE) {
                         buttonsLayout.setVisibility(View.VISIBLE);
-                        tvTakeAPicture.setVisibility(View.VISIBLE);
-                        tvChooseFrom.setVisibility(View.VISIBLE);
+                        btnTakeAPicture.setVisibility(View.VISIBLE);
+                        btnChooseFrom.setVisibility(View.VISIBLE);
 
-                        tvTakeAPicture.setOnClickListener(new View.OnClickListener() {
+                        btnTakeAPicture.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -148,19 +161,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                             }
                         });
 
-                        tvChooseFrom.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(intent, SELECT_FILE);
-                            }
-                        });
+                        btnChooseFrom.setOnClickListener(v1 -> Crop.pickImage(context, this));
+
                     } else {
                         buttonsLayout.setVisibility(View.GONE);
-                        tvTakeAPicture.setVisibility(View.INVISIBLE);
-                        tvChooseFrom.setVisibility(View.INVISIBLE);
-                        tvTakeAPicture.setOnClickListener(null);
-                        tvChooseFrom.setOnClickListener(null);
+                        btnTakeAPicture.setVisibility(View.INVISIBLE);
+                        btnChooseFrom.setVisibility(View.INVISIBLE);
+                        btnTakeAPicture.setOnClickListener(null);
+                        btnChooseFrom.setOnClickListener(null);
                     }
                 } else {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{READ_EXTERNAL_STORAGE}, 1);
@@ -181,31 +189,91 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == CAMERA_REQUEST ) {
+            if (requestCode == CAMERA_REQUEST) {
                 Bundle extras = data.getExtras();
                 Bitmap thePic = extras.getParcelable("data"); // get the cropped bitmap
                 savePhoto(thePic);
+                getActivity().recreate();
+            }
+            else if (requestCode == Crop.REQUEST_PICK) {
+                beginCrop(data.getData());
+            }
+            else if (requestCode == Crop.REQUEST_CROP) {
+                try {
+                    handleCrop(resultCode, data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (requestCode == CROP_PIC) {
+                Bundle extras = data.getExtras();
+                Bitmap thePic = extras.getParcelable("data"); // get the cropped bitmap
+                savePhoto(thePic);
+                getActivity().recreate();
             }
             else if (requestCode == SELECT_FILE) {
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                Cursor cursor = getActivity().getContentResolver().query(selectedImage,filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
-                //ImageView imageView = (ImageView) findViewById(R.id.imgView);
-                imageUserPicture.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-
+                Uri selectedImageUri = data.getData();
+                performCrop(selectedImageUri);
             }
+
 
         }
     }
 
 
-    public void savePhoto (Bitmap photo) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the contacts-related task you need to do.
+                }
+                return;
+            }
+            // other 'case' lines to check for other permissions this app might request
+        }
+    }
+
+    /**
+     * Methods to get absolute path to picture from internal storage.
+     *
+     * @param uri - this is data from intent: data.getData();
+     * @return absolute path to picture from storage
+     */
+    @Nullable
+    private String getPath(Uri uri) throws URISyntaxException {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = { "_data" };
+            Cursor cursor;
+
+            try {
+                cursor = getContext().getContentResolver().query(uri, projection, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+                cursor.close(); // added this line, if something went wrong than just delete this line;
+
+            } catch (Exception e) {
+                // Eat it
+            }
+        }
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Method to save photo in storage from camera.
+     * @param photo - bitmap which we had from extras.getParcelable
+     */
+    public void savePhoto(Bitmap photo) {
         String root = Environment.getExternalStorageDirectory().toString(); // path
-        File myDir = new File(root + "/android/data/com.sashakhyzhun.gerzhiktattoink"); // folder
+        File myDir = new File(root + "/android/data/com.sashakhyzhun.gerzhiktattooink"); // folder
         myDir.mkdirs(); // create folder
 
         File file = new File(myDir, "profile.jpg"); // file
@@ -222,6 +290,20 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         Uri uri = Uri.fromFile(file);
         sessionManager.setUserPathToPic(uri.toString());
+
+        Glide.with(getActivity())
+                .load(uri)
+                .bitmapTransform(new CropCircleTransformation(context))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .override(130, 130)
+                .into(imageUserPicture);
+        Glide.with(getActivity())
+                .load(uri)
+                .bitmapTransform(new CropCircleTransformation(context))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into((ImageView) getActivity().findViewById(R.id.image_view_user_photo));
 
         FileOutputStream out = null;
         try {
@@ -253,23 +335,70 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    /**
+     * Method witch handling crop the picture. Here we get photo path, cropped it.
+     * @param source - this is path to origin photo which we want to crop
+     */
+    private void beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().withMaxSize(300, 300).start(getContext(), this);
+    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the contacts-related task you need to do.
-                }
-                return;
-            }
-            // other 'case' lines to check for other permissions this app might request
+    /**
+     * Method witch handling crop the picture. Here we get photo path, cropped it
+     * @param resultCode - code from intent 'start activity for result' must be 'OK'
+     * @param result - code from intent which shows for us specify request, must be 'REQUEST_CROP'
+     * @throws IOException if something went wrong then we  can expect empty fields.
+     */
+    private void handleCrop(int resultCode, Intent result) throws IOException {
+        if (resultCode == RESULT_OK) {
+            Uri uri = Crop.getOutput(result);
+            String path = null;
+            try {
+                path = getPath(uri);
+            } catch (URISyntaxException e) {e.printStackTrace();}
+
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(),uri);
+            savePhoto(bitmap);
+            getActivity().recreate();
+
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(getContext(), Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
 
-    private boolean checkWriteExternalPermission() {
+    /**
+     * Method to start crop the photo. This method starts activity for result 'CROP_PIC'
+     * @param picUri - this is data from intent: data.getData();
+     */
+    private void performCrop(Uri picUri) {
+        // take care of exceptions
+        try {
+            // call the standard crop action intent (the user device may not support it)
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(picUri, "image/*"); // indicate image type and Uri
+            cropIntent.putExtra("crop", "true");          // set crop properties
+            cropIntent.putExtra("aspectX", 4);            // indicate aspect of desired crop
+            cropIntent.putExtra("aspectY", 2);            // indicate output X and Y
+            cropIntent.putExtra("outputX", 300);
+            cropIntent.putExtra("outputY", 500);
+            cropIntent.putExtra("return-data", true);     // retrieve data on return
+            startActivityForResult(cropIntent, CROP_PIC);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException e) {
+            Toast toast = Toast.makeText(getContext(), "This device doesn't support the crop action!", Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
+
+    /**
+     * Method which returns boolean value of granted permission. To work with storage we need to
+     * have this permission and we had to check it in runtime
+     * @return value of granted permission
+     */
+    private boolean checkPermissions() {
         int res = getContext().checkCallingOrSelfPermission(READ_EXTERNAL_STORAGE);
         return (res == PackageManager.PERMISSION_GRANTED);
     }

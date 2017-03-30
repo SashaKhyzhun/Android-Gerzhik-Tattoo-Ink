@@ -1,7 +1,9 @@
 package com.sashakhyzhun.gerzhiktattooink.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -13,37 +15,43 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sashakhyzhun.gerzhiktattooink.R;
-import com.sashakhyzhun.gerzhiktattooink.fragments.HomeFragment;
-import com.sashakhyzhun.gerzhiktattooink.fragments.MoviesFragment;
-import com.sashakhyzhun.gerzhiktattooink.fragments.NotificationsFragment;
-import com.sashakhyzhun.gerzhiktattooink.fragments.PhotoFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.AboutMeFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.ContactMeFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.FindMyOfficeFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.NewsFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.PrivacyPolicyFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.SettingsFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.TermsFragment;
 import com.sashakhyzhun.gerzhiktattooink.utils.CircleTransform;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
+import com.sashakhyzhun.locationhelper.LocationService;
 
-import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_NEWS;
-import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_FIND_MY_OFFICE;
-import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_CONTACT_US;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_ABOUT_ME;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_CONTACT_US;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_FIND_MY_OFFICE;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_NEWS;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_PRIVACY_POLICY;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_SETTINGS;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_TERMS;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static String CURRENT_TAG = TAG_NEWS;
     public static int navItemIndex = 0;
     private NavigationView navigationView;
-    private FloatingActionButton fab;
+//    private FloatingActionButton fab;
     private DrawerLayout drawer;
     private String[] activityTitles;
     private Handler mHandler;
@@ -62,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
+                InputMethodManager input = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                if (getWindow().getCurrentFocus() != null)
+                    input.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), 0);
             }
         };
         drawer.setDrawerListener(drawerToggle);
@@ -71,9 +82,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View navHeader = navigationView.getHeaderView(0);
-        TextView  drawerName  = (TextView)  navHeader.findViewById(R.id.name);
-        TextView  drawerEmail = (TextView)  navHeader.findViewById(R.id.website);
-        ImageView drawerImage = (ImageView) navHeader.findViewById(R.id.img_profile);
+        TextView  drawerName  = (TextView)  navHeader.findViewById(R.id.text_view_user_name);
+        TextView  drawerEmail = (TextView)  navHeader.findViewById(R.id.text_view_user_email);
+        ImageView drawerImage = (ImageView) navHeader.findViewById(R.id.image_view_user_photo);
 
         // load nav menu header data
         drawerName.setText(session.getUserName());
@@ -87,18 +98,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .into(drawerImage);
 
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "text", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        });
+//        fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(view -> {
+//            Snackbar.make(view, "text?", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//        });
 
         if (savedInstanceState == null) {
             navItemIndex = 0;
             CURRENT_TAG = TAG_NEWS;
-            loadHomeFragment();
+            loadCurrentFragment();
         }
     }
 
@@ -107,15 +115,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Returns respected fragment that user
      * selected from navigation menu
      */
-    private void loadHomeFragment() {
+    private void loadCurrentFragment() {
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-        navigationView.getMenu().getItem(navItemIndex);   // selecting appropriate nav menu item
-        getSupportActionBar().setTitle(activityTitles[navItemIndex]); // set toolbar title
-
+        //navigationView.getMenu().getItem(navItemIndex);   // selecting appropriate nav menu item
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(activityTitles[navItemIndex]); // set toolbar title
+        }
         // if user select the current navigation menu again, just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
-            toggleFab();
+            //toggleFab();
             return;
         }
 
@@ -123,23 +132,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // when switching between navigation menus
         // So using runnable, the fragment is loaded with cross fade effect
         // This effect can be seen in GMail app
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                // update the main content by replacing fragments
-                Fragment fragment = getHomeFragment();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-                fragmentTransaction.commitAllowingStateLoss();
-            }
+        Runnable runnable = () -> {
+            // update the main content by replacing fragments
+            Fragment fragment = getHomeFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+            fragmentTransaction.commitAllowingStateLoss();
         };
 
         mHandler = new Handler();
         mHandler.post(runnable); // If 'runnable' is not null, then add to the message queue
         drawer.closeDrawers();   // Closing drawer on item click
         invalidateOptionsMenu(); // refresh toolbar menu
-        toggleFab();             // show or hide the fab button
+        //toggleFab();             // show or hide the fab button
     }
 
 
@@ -168,19 +174,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 CURRENT_TAG = TAG_SETTINGS;
                 break;
             case R.id.nav_terms:
-                // idea: mb start new intent like new task?
-                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                drawer.closeDrawers();
-                return true;
+                navItemIndex = 5;
+                CURRENT_TAG = TAG_TERMS;
+                break;
             case R.id.nav_privacy_policy:
-                startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
-                drawer.closeDrawers();
-                return true;
-            default: navItemIndex = 0;
+                navItemIndex = 6;
+                CURRENT_TAG = TAG_PRIVACY_POLICY;
+                break;
+            default:
+                navItemIndex = 0;
+                CURRENT_TAG = TAG_NEWS;
         }
 
 
-        loadHomeFragment();
+        loadCurrentFragment();
 
         return true;
     }
@@ -195,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (navItemIndex != 0) {
             navItemIndex = 0;
             CURRENT_TAG = TAG_NEWS;
-            loadHomeFragment();
+            loadCurrentFragment();
         }
     }
 
@@ -218,23 +225,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Fragment getHomeFragment() {
         switch (navItemIndex) {
-            case 0: return new HomeFragment();
-            case 1: return new PhotoFragment();
-            case 2: return new MoviesFragment();
-            case 3: return new NotificationsFragment();
+            case 0: return new NewsFragment();
+            case 1: return new FindMyOfficeFragment();
+            case 2: return new AboutMeFragment();
+            case 3: return new ContactMeFragment();
             case 4: return new SettingsFragment();
-            default: return new HomeFragment();
+            case 5: return new TermsFragment();
+            case 6: return new PrivacyPolicyFragment();
+            default:return new NewsFragment();
         }
     }
 
 
-    private void toggleFab() {
-        if (navItemIndex == 0) {
-            fab.show();
-        } else {
-            fab.hide();
-        }
-    }
+//    private void toggleFab() {
+//        if (navItemIndex == 0) {
+//            fab.show();
+//        } else {
+//            fab.hide();
+//        }
+//    }
 
 
 }
