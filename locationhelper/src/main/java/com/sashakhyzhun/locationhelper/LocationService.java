@@ -150,8 +150,8 @@ public class LocationService extends Service {
 
             Toast.makeText(getApplicationContext(),
                     "Latitude: " + loc.getLatitude() +
-                    "Longitude: " + loc.getLongitude() +
-                    "Speed: " + loc.getSpeed(), Toast.LENGTH_SHORT).show();
+                    "\nLongitude: " + loc.getLongitude() +
+                    "\nSpeed: " + loc.getSpeed(), Toast.LENGTH_LONG).show();
 
 
             Log.i(TAG, "onLocationChanged: Latitude: " + loc.getLatitude());

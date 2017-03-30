@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.sashakhyzhun.locationhelper.LocationService;
 
 public class NewsFragment extends Fragment implements View.OnClickListener {
 
+    public static final String TAG = "NewsFragment";
     private GPSTracker gpsTracker;
     //private LocationUtil locationHelper;
     private TextView tvLatitude, tvLongitude, tvHasSpeed, tvSpeed;
@@ -40,8 +42,6 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
 
 
-        gpsTracker = new GPSTracker(getActivity());
-
         tvLatitude = (TextView) view.findViewById(R.id.text_view_latitude);
         tvLongitude = (TextView) view.findViewById(R.id.text_view_longitude);
         tvHasSpeed = (TextView) view.findViewById(R.id.text_view_has_speed);
@@ -54,15 +54,34 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
         //locationHelper = new LocationUtil(getActivity());
         //locationHelper.invokeLocationPermission();
 
-        setCurrentData();
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setCurrentData();
+        Log.i(TAG, "onResume: ");
+        //setCurrentData();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause: ");
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, "onStop: ");
+        if (gpsTracker != null) gpsTracker.stopUsingGPS();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy: ");
     }
 
     @Override
@@ -70,6 +89,8 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.button_start:
                 getActivity().startService(new Intent(getActivity(), LocationService.class));
+                gpsTracker = new GPSTracker(getActivity());
+                setCurrentData();
                 break;
             case R.id.button_stop:
                 getActivity().stopService(new Intent(getActivity(), LocationService.class));
