@@ -1,11 +1,7 @@
 package com.sashakhyzhun.gerzhiktattooink.fragments;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -17,7 +13,7 @@ import android.widget.TextView;
 
 import com.sashakhyzhun.gerzhiktattooink.R;
 import com.sashakhyzhun.locationhelper.GPSTracker;
-import com.sashakhyzhun.locationhelper.MyLocationHelper;
+import com.sashakhyzhun.locationhelper.LocationUtil;
 
 /**
  * Created by SashaKhyzhun on 2/2/17.
@@ -26,7 +22,7 @@ import com.sashakhyzhun.locationhelper.MyLocationHelper;
 public class NewsFragment extends Fragment {
 
     private GPSTracker gpsTracker;
-    private MyLocationHelper locationHelper;
+    private LocationUtil locationHelper;
     private TextView tvLatitude, tvLongitude, tvSpeed;
 
 
@@ -47,8 +43,9 @@ public class NewsFragment extends Fragment {
         tvLongitude = (TextView) view.findViewById(R.id.text_view_longitude);
         tvSpeed = (TextView) view.findViewById(R.id.text_view_speed);
 
-        locationHelper = new MyLocationHelper(getActivity());
+        locationHelper = new LocationUtil(getActivity());
         locationHelper.invokeLocationPermission();
+
 
 
         if (ActivityCompat.checkSelfPermission(getContext(),
@@ -58,7 +55,7 @@ public class NewsFragment extends Fragment {
 
             tvLatitude.setText(String.format("Latitude: %s", gpsTracker.getLatitude()));
             tvLongitude.setText(String.format("Longitude: %s", gpsTracker.getLongitude()));
-            tvSpeed.setText(String.format("Speed: %s", gpsTracker.getSpeed()));
+            tvSpeed.setText(String.format("Speed: %s", gpsTracker.hasSpeed()));
         } else {
             gpsTracker.showSettingsAlert();
         }

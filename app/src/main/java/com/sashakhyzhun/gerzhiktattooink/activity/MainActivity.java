@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -35,6 +36,9 @@ import com.sashakhyzhun.gerzhiktattooink.fragments.SettingsFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.TermsFragment;
 import com.sashakhyzhun.gerzhiktattooink.utils.CircleTransform;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
+import com.sashakhyzhun.locationhelper.GPSTracker;
+import com.sashakhyzhun.locationhelper.LocationChecker;
+import com.sashakhyzhun.locationhelper.LocationUtil;
 
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_NEWS;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_FIND_MY_OFFICE;
@@ -97,7 +101,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "text", Snackbar.LENGTH_LONG).setAction("Action", null).show());
+        fab.setOnClickListener(view -> {
+            LocationChecker checker = new LocationChecker(getApplicationContext());
+            checker.enableDailyLocationCheck(2, 27, 9999);
+            Snackbar.make(view, "Setup daily location checker, want to cancel?", Snackbar.LENGTH_LONG).setAction("Action", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checker.disableDailyLocationCheck(9999);
+                    Toast.makeText(MainActivity.this, "Successfully canceled", Toast.LENGTH_SHORT).show();
+                }
+            }).show();
+        });
 
         if (savedInstanceState == null) {
             navItemIndex = 0;

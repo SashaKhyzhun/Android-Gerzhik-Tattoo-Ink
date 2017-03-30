@@ -12,44 +12,13 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
  * Created on 3/28/17.
  */
 
-public class MyLocationHelper extends Activity {
+public class LocationUtil extends Activity {
 
     private Activity activity;
 
-    public MyLocationHelper(Activity activity) {
+    public LocationUtil(Activity activity) {
         this.activity = activity;
     }
-
-
-//    public void getLocationPermissionStatus() {
-//        System.out.println("asd method");
-//        PermissionUtil.checkPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION, new PermissionAskListener() {
-//            @Override
-//            public void onPermissionAsk() {
-//                System.out.println("onPermissionAsk OMG");
-//                invokeLocationPermission();
-//            }
-//
-//            @Override
-//            public void onPermissionPreviouslyDenied() {
-//                //show a dialog explaining permission and then request permission
-//                System.out.println("onPermissionPreviouslyDenied OMG");
-//            }
-//
-//            @Override
-//            public void onPermissionDisabled() {
-//                System.out.println("onPermissionDisabled OMG");
-//                //askLocationPermission();
-//
-//            }
-//
-//            @Override
-//            public void onPermissionGranted() {
-//                System.out.println("onPermissionGranted OMG");
-//            }
-//        });
-//    }
-
 
 
     /**

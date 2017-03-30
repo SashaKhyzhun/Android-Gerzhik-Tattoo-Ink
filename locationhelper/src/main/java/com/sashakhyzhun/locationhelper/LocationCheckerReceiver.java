@@ -43,7 +43,9 @@ public class LocationCheckerReceiver extends BroadcastReceiver {
 
         GPSTracker gpsTracker = new GPSTracker(context);
         if (gpsTracker.canGetLocation()) {
-            System.out.println("lat: " + gpsTracker.getLatitude() + " lon: " + gpsTracker.getLongitude());
+            System.out.println("Latitude: " + gpsTracker.getLatitude() + " Longitude: " + gpsTracker.getLongitude());
+        } else {
+            System.out.println("Location is disable...");
         }
 
         final LocationChecker lc = new LocationChecker(context);

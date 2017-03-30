@@ -24,7 +24,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.sashakhyzhun.gerzhiktattooink.R;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
-import com.sashakhyzhun.locationhelper.MyLocationHelper;
+import com.sashakhyzhun.locationhelper.LocationUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
 
-        MyLocationHelper locationHelper = new MyLocationHelper(this);
+        LocationUtil locationHelper = new LocationUtil(this);
         locationHelper.getLocationPermissionGrantedValue();
 
 

@@ -153,6 +153,13 @@ public final class GPSTracker implements LocationListener {
         }
         return speed;
     }
+    public boolean hasSpeed() {
+        boolean hasSpeed = false;
+        if (location != null) {
+            hasSpeed = location.hasSpeed();
+        }
+        return hasSpeed;
+    }
 
     /**
      * Function to check GPS/wifi enabled
