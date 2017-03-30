@@ -9,17 +9,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.sashakhyzhun.gerzhiktattooink.R;
-
-import java.util.Date;
+import com.sashakhyzhun.locationhelper.MySecurityException;
+import com.sashakhyzhun.locationhelper.PermissionUtil;
 
 /**
  * Created by SashaKhyzhun on 2/2/17.

@@ -3,6 +3,7 @@ package com.sashakhyzhun.gerzhiktattooink.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +15,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,23 +27,21 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sashakhyzhun.gerzhiktattooink.R;
-import com.sashakhyzhun.gerzhiktattooink.fragments.NewsFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.AboutMeFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.ContactMeFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.FindMyOfficeFragment;
+import com.sashakhyzhun.gerzhiktattooink.fragments.NewsFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.PrivacyPolicyFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.SettingsFragment;
 import com.sashakhyzhun.gerzhiktattooink.fragments.TermsFragment;
 import com.sashakhyzhun.gerzhiktattooink.utils.CircleTransform;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
-import com.sashakhyzhun.locationhelper.GPSTracker;
-import com.sashakhyzhun.locationhelper.LocationChecker;
-import com.sashakhyzhun.locationhelper.LocationUtil;
+import com.sashakhyzhun.locationhelper.MyService;
 
-import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_NEWS;
-import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_FIND_MY_OFFICE;
-import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_CONTACT_US;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_ABOUT_ME;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_CONTACT_US;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_FIND_MY_OFFICE;
+import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_NEWS;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_PRIVACY_POLICY;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_SETTINGS;
 import static com.sashakhyzhun.gerzhiktattooink.utils.Constants.TAG_TERMS;
@@ -102,13 +100,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            LocationChecker checker = new LocationChecker(getApplicationContext());
-            checker.enableDailyLocationCheck(2, 27, 9999);
-            Snackbar.make(view, "Setup daily location checker, want to cancel?", Snackbar.LENGTH_LONG).setAction("Action", new View.OnClickListener() {
+            MyService service = new MyService();
+            service.onCreate();
+
+            Snackbar.make(view, "text?", Snackbar.LENGTH_LONG).setAction("Action", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    checker.disableDailyLocationCheck(9999);
-                    Toast.makeText(MainActivity.this, "Successfully canceled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "text.", Toast.LENGTH_SHORT).show();
                 }
             }).show();
         });

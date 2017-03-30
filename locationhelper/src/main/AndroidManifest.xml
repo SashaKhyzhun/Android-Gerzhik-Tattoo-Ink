@@ -16,7 +16,9 @@
     <application android:allowBackup="true" android:label="@string/app_name"
         android:supportsRtl="true">
 
-        <receiver android:name=".LocationCheckerReceiver" />
+        <!--<receiver android:name=".LocationCheckerReceiver" />-->
+
+        <service android:name=".MyService" android:process=":my_service" />
 
     </application>
 

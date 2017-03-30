@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.sashakhyzhun.gerzhiktattooink.R;
 import com.sashakhyzhun.locationhelper.GPSTracker;
-import com.sashakhyzhun.locationhelper.LocationUtil;
 
 /**
  * Created by SashaKhyzhun on 2/2/17.
@@ -22,7 +21,7 @@ import com.sashakhyzhun.locationhelper.LocationUtil;
 public class NewsFragment extends Fragment {
 
     private GPSTracker gpsTracker;
-    private LocationUtil locationHelper;
+    //private LocationUtil locationHelper;
     private TextView tvLatitude, tvLongitude, tvSpeed;
 
 
@@ -43,8 +42,8 @@ public class NewsFragment extends Fragment {
         tvLongitude = (TextView) view.findViewById(R.id.text_view_longitude);
         tvSpeed = (TextView) view.findViewById(R.id.text_view_speed);
 
-        locationHelper = new LocationUtil(getActivity());
-        locationHelper.invokeLocationPermission();
+        //locationHelper = new LocationUtil(getActivity());
+        //locationHelper.invokeLocationPermission();
 
 
 

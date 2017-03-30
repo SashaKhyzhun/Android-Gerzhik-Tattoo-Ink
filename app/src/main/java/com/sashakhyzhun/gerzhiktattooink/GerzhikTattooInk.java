@@ -16,4 +16,5 @@ public class GerzhikTattooInk extends Application {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
     }
+
 }

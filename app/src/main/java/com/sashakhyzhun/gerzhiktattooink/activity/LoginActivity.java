@@ -24,7 +24,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.sashakhyzhun.gerzhiktattooink.R;
 import com.sashakhyzhun.gerzhiktattooink.utils.SessionManager;
-import com.sashakhyzhun.locationhelper.LocationUtil;
+import com.sashakhyzhun.locationhelper.PermissionUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,16 +57,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
 
-        LocationUtil locationHelper = new LocationUtil(this);
-        locationHelper.getLocationPermissionGrantedValue();
+        PermissionUtil.invokeLocationPermission(this);
 
+//        PermissionUtil.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, new PermissionAskListener() {
+//            @Override
+//            public void onPermissionAsk() {
+//                ActivityCompat.requestPermissions(
+//                        LoginActivity.this,
+//                        new String[] {
+//                                Manifest.permission.ACCESS_FINE_LOCATION,
+//                                Manifest.permission.ACCESS_COARSE_LOCATION
+//                        },
+//                        1);
+//            }
+//
+//            @Override
+//            public void onPermissionPreviouslyDenied() {
+//                PreferenceUtil.firstTimeAskingPermission(
+//                        getApplicationContext(),
+//                        Manifest.permission.ACCESS_FINE_LOCATION,
+//                        true);
+//            }
+//
+//            @Override
+//            public void onPermissionDisabled() {
+//
+//            }
+//
+//            @Override
+//            public void onPermissionGranted() {
+//
+//            }
+//        });
 
-//        /************************ for API >= 23 *************************/
-//        ActivityCompat.requestPermissions(this, new String[]{
-//                Manifest.permission.ACCESS_FINE_LOCATION,
-//                Manifest.permission.ACCESS_COARSE_LOCATION,
-//        }, 1);
-//        /****************************************************************/
 
         btnLoginFacebook = (LoginButton) findViewById(R.id.button_login_facebook);
         btnLoginGoogle = (SignInButton) findViewById(R.id.button_login_google);

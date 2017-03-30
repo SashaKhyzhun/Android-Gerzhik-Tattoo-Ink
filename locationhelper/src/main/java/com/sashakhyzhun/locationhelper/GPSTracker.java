@@ -153,6 +153,7 @@ public final class GPSTracker implements LocationListener {
         }
         return speed;
     }
+
     public boolean hasSpeed() {
         boolean hasSpeed = false;
         if (location != null) {
@@ -198,33 +199,33 @@ public final class GPSTracker implements LocationListener {
     }
 
 
-    /**
-     * Method to set daily location checker. Create AlarmManager for daily ring, convert
-     * time and sending extras for CustomAlarmReceiver. Next we generate cards for MainActivity.
-     * @param requestCode - values from time picker: minutes and hour. To start we get this,
-     *                      convert to normal view (means from 1:8 to 01:08) and put inside
-     *                      alarmManager like ID.
-     * @param hour - this is value from last method-provider, this value is equals to time when
-     *               we need fire our alarm manager.
-     * @param min  - this is value from last method-provider, this value is equals to time when
-     *               we need fire our alarm manager.
-     */
-    public void setDailyLocationChecker(int hour, int min, int requestCode) {
-        LocationChecker locationChecker = new LocationChecker(context);
-        locationChecker.enableDailyLocationCheck(hour, min, requestCode);
-    }
-
-    /**
-     * Method to disable daily location checker. Create AlarmManager for daily ring, convert
-     * time and sending extras for CustomAlarmReceiver. Next we generate cards for MainActivity.
-     * @param requestCode - values from time picker: minutes and hour. To start we get this,
-     *                      convert to normal view (means from 1:8 to 01:08) and put inside
-     *                      alarmManager like ID.
-     */
-    public void disableDailyLocationChecker(int requestCode) {
-        LocationChecker locationChecker = new LocationChecker(context);
-        locationChecker.disableDailyLocationCheck(requestCode);
-    }
+//    /**
+//     * Method to set daily location checker. Create AlarmManager for daily ring, convert
+//     * time and sending extras for CustomAlarmReceiver. Next we generate cards for MainActivity.
+//     * @param requestCode - values from time picker: minutes and hour. To start we get this,
+//     *                      convert to normal view (means from 1:8 to 01:08) and put inside
+//     *                      alarmManager like ID.
+//     * @param hour - this is value from last method-provider, this value is equals to time when
+//     *               we need fire our alarm manager.
+//     * @param min  - this is value from last method-provider, this value is equals to time when
+//     *               we need fire our alarm manager.
+//     */
+//    public void setDailyLocationChecker(int hour, int min, int requestCode) {
+//        LocationChecker locationChecker = new LocationChecker(context);
+//        locationChecker.enableDailyLocationCheck(hour, min, requestCode);
+//    }
+//
+//    /**
+//     * Method to disable daily location checker. Create AlarmManager for daily ring, convert
+//     * time and sending extras for CustomAlarmReceiver. Next we generate cards for MainActivity.
+//     * @param requestCode - values from time picker: minutes and hour. To start we get this,
+//     *                      convert to normal view (means from 1:8 to 01:08) and put inside
+//     *                      alarmManager like ID.
+//     */
+//    public void disableDailyLocationChecker(int requestCode) {
+//        LocationChecker locationChecker = new LocationChecker(context);
+//        locationChecker.disableDailyLocationCheck(requestCode);
+//    }
 
 
 
